@@ -13,6 +13,10 @@ class ClientSocket:
         public ->    (0.0.0.0)
         otherwise, mode is interpreted as an IP address.
         """
+        if mode == '127.0.0.1':
+            mode = 'localhost'
+        elif mode == '0.0.0.0':
+            mode = 'public'
 
         if mode == "localhost":
             self.connect_ip = mode

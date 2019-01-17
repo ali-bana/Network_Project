@@ -19,7 +19,7 @@
 
     Version:
         For now version is 1
-    
+
     Type:
         1: Register
         2: Advertise
@@ -178,6 +178,7 @@
     
 """
 from struct import *
+from src.tools.Node import Node
 
 
 class Packet:
@@ -188,6 +189,7 @@ class Packet:
         :param buf: Input buffer was just decoded.
         :type buf: bytearray
         """
+        self.binary = buf
         pass
 
     def get_header(self):
@@ -268,6 +270,9 @@ class PacketFactory:
     """
     This class is only for making Packet objects.
     """
+    @staticmethod
+    def bin2text(s):
+        return "".join([chr(int(s[i:i + 8], 2)) for i in range(0, len(s), 8)])
 
     @staticmethod
     def parse_buffer(buffer):
@@ -280,8 +285,38 @@ class PacketFactory:
         :rtype: Packet
 
         """
+        version = buffer[0:2]
+        type = buffer[2:4]
+        length = buffer[4:8]
+        ip = buffer[8:16]
+        port = buffer[16:20]
+
+        version = int.from_bytes(version, 'big')
+        type = int.from_bytes(type, 'big')
+        length = int.from_bytes(length, 'big')
+        port = int.from_bytes(port, 'big')
+        ip = str(int.from_bytes(ip[0:2], 'big')) + '.' + str(int.from_bytes(ip[2:4], 'big')) + '.' + str(int.from_bytes(ip[4:6], 'big')) + '.' + str(int.from_bytes(ip[6:8], 'big'))
+
+
+
+        return version, type, length, ip, port
         pass
 
+
+    @staticmethod
+    def make_header(source_address, type, length):
+        port = Node.parse_port(source_address[1])
+        ip = Node.parse_ip(source_address[0])
+        ip = ip.split('.')
+        result = bytes([0])
+        result = result + bytes([1])
+        result = result + type.to_bytes(2, byteorder='big')
+        result = result + length.to_bytes(4, byteorder='big')
+        for a in ip:
+            result = result + int(a).to_bytes(2, byteorder='big')
+        result = result + port.to_bytes(4, byteorder='big')
+        return result
+        pass
     @staticmethod
     def new_reunion_packet(type, source_address, nodes_array):
         """
@@ -359,4 +394,6 @@ class PacketFactory:
         :return: New Message packet.
         :rtype: Packet
         """
+        body = bytes(message, 'UTF-8')
+        return PacketFactory.make_header(source_server_address, 4, len(body) // 8) + body
         pass

@@ -21,7 +21,7 @@ class Node:
         self.server_port = Node.parse_port(server_address[1])
 
         print("Server Address: ", server_address)
-
+        self.client = ClientSocket(self.server_ip, self.server_port, 2048, set_register)
         self.out_buff = []
         pass
 
@@ -31,6 +31,9 @@ class Node:
 
         :return:
         """
+        for o in self.out_buff:
+            self.client.send(o)
+        self.out_buff = []
         pass
 
     def add_message_to_out_buff(self, message):
@@ -67,6 +70,8 @@ class Node:
         :return: Formatted IP
         :rtype: str
         """
+        if ip == 'localhost':
+            return ip
         return '.'.join(str(int(part)).zfill(3) for part in ip.split('.'))
 
     @staticmethod
@@ -79,4 +84,4 @@ class Node:
         :return: Formatted IP
         :rtype: str
         """
-        return str(int(port)).zfill(5)
+        return int(str(int(port)).zfill(5))

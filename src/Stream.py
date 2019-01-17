@@ -1,12 +1,27 @@
+from src.tools.simpletcp.tcpserver import ServerSocket
 from src.tools.simpletcp.tcpserver import TCPServer
-
 from src.tools.Node import Node
 import threading
 
 
 class Stream:
 
-    def __init__(self, ip, port):
+    def callback(self, address, queue, data):
+        """
+        The callback function will run when a new data received from server_buffer.
+
+        :param address: Source address.
+        :param queue: Response queue.
+        :param data: The data received from the socket.
+        :return:
+        """
+        queue.put(bytes('ACK', 'utf8'))
+        self._server_in_buf.append(data)
+        self.app_call_back(address, data)
+
+    pass
+
+    def __init__(self, ip, port, app_call_back):
         """
         The Stream object constructor.
 
@@ -16,26 +31,27 @@ class Stream:
 
         :param ip: 15 characters
         :param port: 5 characters
+
         """
+        print('shit')
+        self.ip = Node.parse_ip(ip)
+        print('shit1')
+        self.port = Node.parse_port(port)
+        print('shit2')
 
-        ip = Node.parse_ip(ip)
-        port = Node.parse_port(port)
-
+        self.server = TCPServer(self.ip, self.port, self.callback, 1000, 2048)
+        print('shit3')
+        self.server.start()
+        print('shit4')
         self._server_in_buf = []
+        print('shit5')
+        self.app_call_back = app_call_back
+        print('shit6')
+        self.nodes = []
+        print('shit7')
+        self.out_buffer = []
+        print('shi8')
 
-        def callback(address, queue, data):
-            """
-            The callback function will run when a new data received from server_buffer.
-
-            :param address: Source address.
-            :param queue: Response queue.
-            :param data: The data received from the socket.
-            :return:
-            """
-            queue.put(bytes('ACK', 'utf8'))
-            self._server_in_buf.append(data)
-
-        pass
 
     def get_server_address(self):
         """
@@ -43,6 +59,7 @@ class Stream:
         :return: Our TCPServer address
         :rtype: tuple
         """
+        return self.ip, self.port
         pass
 
     def clear_in_buff(self):
@@ -65,6 +82,8 @@ class Stream:
 
         :return:
         """
+        print('this is add_node')
+        self.nodes.append(Node(server_address, False, set_register_connection))
         pass
 
     def remove_node(self, node):
@@ -79,6 +98,8 @@ class Stream:
 
         :return:
         """
+        self.nodes.remove(node)
+        node.close()
         pass
 
     def get_node_by_server(self, ip, port):
@@ -95,6 +116,9 @@ class Stream:
         :return: The node that input address.
         :rtype: Node
         """
+        for node in self.nodes:
+            if node.get_server_address() == (Node.parse_ip(ip), Node.parse_port(port)):
+                return node
         pass
 
     def add_message_to_out_buff(self, address, message):
@@ -110,6 +134,9 @@ class Stream:
 
         :return:
         """
+        node = self.get_node_by_server(address[0], address[1])
+        if node is not None:
+            self.out_buffer.append((message, node))
         pass
 
     def read_in_buf(self):
@@ -134,6 +161,10 @@ class Stream:
 
         :return:
         """
+        for a in self.out_buffer:
+            if a[1] == node:
+                node.add_message_to_out_buff(a[0])
+            node.send_message()
         pass
 
     def send_out_buf_messages(self, only_register=False):
@@ -142,4 +173,10 @@ class Stream:
 
         :return:
         """
+        #dont know only register fucking meaning
+        print('this is send_out_buf_messages')
+
+        for a in self.out_buffer:
+            a[1].add_message_to_out_buff(a[0])
+            a[1].send_message()
         pass

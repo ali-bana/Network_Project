@@ -1,12 +1,12 @@
-from tools.simpletcp.serversocket import ServerSocket
+from src.Stream import Stream
 
-def callback(ip, queue, data):
-    print(ip)
-    print(queue)
+def callback(address, data):
+    print(address[0])
+    print(address[1])
     print(data)
-    queue.put(bytes('dfgdhd', 'UTF-8'))
 
 
 
-serversock = ServerSocket('localhost', 8888, callback, 1, 1024)
-serversock.run()
+
+s = Stream('localhost', 8888, callback)
+
