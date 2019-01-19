@@ -84,4 +84,4 @@ class Node:
         :return: Formatted IP
         :rtype: str
         """
-        return int(str(int(port)).zfill(5))
+        return str(int(port)).zfill(5)

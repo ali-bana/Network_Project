@@ -182,7 +182,7 @@ from src.tools.Node import Node
 
 
 class Packet:
-    def __init__(self, buf):
+    def __init__(self, ver, ty, length, ip, port, body, buf):
         """
         The decoded buffer should convert to a new packet.
 
@@ -190,14 +190,20 @@ class Packet:
         :type buf: bytearray
         """
         self.binary = buf
+        self.version = ver
+        self.type = ty
+        self.length = length
+        self.sender_ip = ip
+        self.sender_port = port
+        self.body = body
+        self.buffer = buf
         pass
-
     def get_header(self):
         """
-
         :return: Packet header
         :rtype: str
         """
+        return str(self.version) + ' ' + str(self.type) + ' ' + str(self.length) + ' ' + self.sender_ip + ' ' + str(self.sender_port)
         pass
 
     def get_version(self):
@@ -206,6 +212,7 @@ class Packet:
         :return: Packet Version
         :rtype: int
         """
+        return self.version
         pass
 
     def get_type(self):
@@ -214,6 +221,7 @@ class Packet:
         :return: Packet type
         :rtype: int
         """
+        return self.type
         pass
 
     def get_length(self):
@@ -222,6 +230,7 @@ class Packet:
         :return: Packet length
         :rtype: int
         """
+        return self.length
         pass
 
     def get_body(self):
@@ -230,6 +239,7 @@ class Packet:
         :return: Packet body
         :rtype: str
         """
+        return self.body
         pass
 
     def get_buf(self):
@@ -239,6 +249,7 @@ class Packet:
         :return The parsed packet to the network format.
         :rtype: bytearray
         """
+        return self.buffer
         pass
 
     def get_source_server_ip(self):
@@ -247,6 +258,7 @@ class Packet:
         :return: Server IP address for the sender of the packet.
         :rtype: str
         """
+        return self.sender_ip
         pass
 
     def get_source_server_port(self):
@@ -255,6 +267,7 @@ class Packet:
         :return: Server Port address for the sender of the packet.
         :rtype: str
         """
+        return self.sender_port
         pass
 
     def get_source_server_address(self):
@@ -263,6 +276,7 @@ class Packet:
         :return: Server address; The format is like ('192.168.001.001', '05335').
         :rtype: tuple
         """
+        return self.sender_ip, self.sender_port
         pass
 
 
@@ -272,7 +286,9 @@ class PacketFactory:
     """
     @staticmethod
     def bin2text(s):
-        return "".join([chr(int(s[i:i + 8], 2)) for i in range(0, len(s), 8)])
+        res = str(s)
+        res = res[2:len(res) - 1]
+        return res
 
     @staticmethod
     def parse_buffer(buffer):
@@ -296,10 +312,9 @@ class PacketFactory:
         length = int.from_bytes(length, 'big')
         port = int.from_bytes(port, 'big')
         ip = str(int.from_bytes(ip[0:2], 'big')) + '.' + str(int.from_bytes(ip[2:4], 'big')) + '.' + str(int.from_bytes(ip[4:6], 'big')) + '.' + str(int.from_bytes(ip[6:8], 'big'))
+        body = PacketFactory.bin2text(buffer[20:])
 
-
-
-        return version, type, length, ip, port
+        return Packet(version, type, length, ip, port, body, buffer)
         pass
 
 
@@ -314,7 +329,7 @@ class PacketFactory:
         result = result + length.to_bytes(4, byteorder='big')
         for a in ip:
             result = result + int(a).to_bytes(2, byteorder='big')
-        result = result + port.to_bytes(4, byteorder='big')
+        result = result + int(port).to_bytes(4, byteorder='big')
         return result
         pass
     @staticmethod
@@ -331,6 +346,10 @@ class PacketFactory:
         :return New reunion packet.
         :rtype Packet
         """
+        body = bytes(type, 'UTF-8') + bytes(str(len(nodes_array)), 'UTF-8').zfill(2)
+        for node in nodes_array:
+            body += bytes(Node.parse_ip(node[0]), 'UTF-8') + bytes(Node.parse_port(node[1]), 'UTF-8')
+        return PacketFactory.make_header(source_address, 5, len(body)) + body
         pass
 
     @staticmethod
@@ -348,6 +367,12 @@ class PacketFactory:
         :rtype Packet
 
         """
+        if type == 'REQ':
+            body = bytes('REQ', 'UTF-8')
+            return PacketFactory.make_header(source_server_address, 2, len(body)) + body
+        else:
+            body = bytes('RES', 'UTF-8') + bytes(str(neighbour[0]), 'UTF-8') + bytes(str(neighbour[1]), 'UTF-8')
+            return PacketFactory.make_header(source_server_address, 2, len(body)) + body
         pass
 
     @staticmethod
@@ -361,16 +386,18 @@ class PacketFactory:
         :rtype Packet
 
         """
+        body = bytes('JOIN', 'UTF-8')
+        return PacketFactory.make_header(source_server_address, 3, len(body)) + body
         pass
 
     @staticmethod
-    def new_register_packet(type, source_server_address, address=(None, None)):
+    def new_register_packet(kind, source_server_address, address=(None, None)):
         """
-        :param type: Type of Register packet
+        :param kind: Type of Register packet
         :param source_server_address: Server address of the packet sender.
         :param address: If 'type' is 'request' we need an address; The format is like ('192.168.001.001', '05335').
 
-        :type type: str
+        :type kind: str
         :type source_server_address: tuple
         :type address: tuple
 
@@ -378,7 +405,12 @@ class PacketFactory:
         :rtype Packet
 
         """
-        pass
+        if kind == 'REQ':
+            body = bytes('REQ', 'UTF-8') + bytes(Node.parse_ip(source_server_address[0]), 'UTF-8') + bytes(str(Node.parse_port(source_server_address[1])), 'UTF-8')
+            return PacketFactory.make_header(source_server_address, 1, len(body)) + body
+        else:
+            body = bytes('RES ACK', 'UTF-8')
+            return PacketFactory.make_header(source_server_address, 1, len(body)) + body
 
     @staticmethod
     def new_message_packet(message, source_server_address):
@@ -395,5 +427,5 @@ class PacketFactory:
         :rtype: Packet
         """
         body = bytes(message, 'UTF-8')
-        return PacketFactory.make_header(source_server_address, 4, len(body) // 8) + body
+        return PacketFactory.make_header(source_server_address, 4, len(body)) + body
         pass
