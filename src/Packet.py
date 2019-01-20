@@ -429,3 +429,13 @@ class PacketFactory:
         body = bytes(message, 'UTF-8')
         return PacketFactory.make_header(source_server_address, 4, len(body)) + body
         pass
+
+    @staticmethod
+    def parse_reunion_packet_body(body):
+        body = str(body)
+        numEntry = int(body[1:2])
+        body = body[2:]
+        result = []
+        for i in range(0, numEntry):
+            result.append((Node.parse_ip(body[20 * i: 20 * i + 15]), Node.parse_port(body[20 * i + 15: 20 * i + 20])))
+        return result

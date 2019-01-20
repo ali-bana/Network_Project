@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4711920f-5e9a-4b05-b9ab-a7460b4d05cb" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Packet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Packet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Peer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Peer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Stream.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Stream.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Test_Client.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Test_Client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tools/Node.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/tools/Node.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/UserInterface.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/UserInterface.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,7 +15,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/Network_Project$UserInterface.coverage" NAME="UserInterface Coverage Results" MODIFIED="1547539180579" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/Network_Project$UserInterface.coverage" NAME="UserInterface Coverage Results" MODIFIED="1547900432707" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Network_Project$Test_Client.coverage" NAME="Test_Client Coverage Results" MODIFIED="1547888083790" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Network_Project$test.coverage" NAME="test Coverage Results" MODIFIED="1547539786614" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Network_Project$Test_Server.coverage" NAME="Test_Server Coverage Results" MODIFIED="1547643199483" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
@@ -33,23 +34,25 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="37" />
+          <entry key="py" value="50" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="37" />
+          <entry key="Python" value="50" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="142" />
-          <entry key="py" value="6217" />
+          <entry key="dummy" value="4" />
+          <entry key="py" value="8483" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="6359" />
+          <entry key="PLAIN_TEXT" value="4" />
+          <entry key="Python" value="8625" />
         </counts>
       </usages-collector>
     </session>
@@ -57,13 +60,30 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/Test_Client.py">
+        <entry file="file://$PROJECT_DIR$/src/Peer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="41" column="9" lean-forward="true" selection-start-line="41" selection-start-column="9" selection-end-line="41" selection-end-column="9" />
+            <state relative-caret-position="4384">
+              <caret line="323" column="19" lean-forward="true" selection-start-line="323" selection-start-column="19" selection-end-line="323" selection-end-column="19" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
-                <marker date="1547888106000" expanded="true" signature="476:604" ph="..." />
+                <marker date="1547977031000" expanded="true" signature="11656:11775" ph="..." />
+                <marker date="1547977031000" expanded="true" signature="11843:11931" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/UserInterface.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="160">
+              <caret line="8" selection-start-line="8" selection-end-line="8" />
+              <folding>
+                <element signature="e#0#16#0" expanded="true" />
+                <marker date="1547979995000" expanded="true" signature="221:222" ph="..." />
+                <marker date="1547979995000" expanded="true" signature="221:1319" ph="..." />
+                <marker date="1547979995000" expanded="true" signature="324:798" ph="..." />
+                <marker date="1547979995000" expanded="true" signature="1110:1319" ph="..." />
               </folding>
             </state>
           </provider>
@@ -72,44 +92,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Packet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-562">
-              <caret line="352" column="12" lean-forward="true" selection-start-line="352" selection-start-column="12" selection-end-line="352" selection-end-column="12" />
+            <state relative-caret-position="5295">
+              <caret line="440" column="21" selection-start-line="440" selection-start-column="21" selection-end-line="440" selection-end-column="21" />
               <folding>
                 <element signature="e#8944#8964#0" expanded="true" />
-                <marker date="1547887657000" expanded="true" signature="11310:11390" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/tools/Node.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="81" column="23" lean-forward="true" selection-start-line="81" selection-start-column="23" selection-end-line="81" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Test_Server.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
-              <folding>
-                <marker date="1547631416000" expanded="true" signature="59:123" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/tools/simpletcp/clientsocket.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="19" selection-start-line="19" selection-end-line="19" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
+                <marker date="1547974046000" expanded="true" signature="11310:11390" ph="..." />
+                <marker date="1547974046000" expanded="true" signature="16565:16574" ph="..." />
               </folding>
             </state>
           </provider>
@@ -132,12 +120,14 @@
       <list>
         <option value="$PROJECT_DIR$/src/test.py" />
         <option value="$PROJECT_DIR$/src/tools/simpletcp/clientsocket.py" />
-        <option value="$PROJECT_DIR$/src/Test_Server.py" />
         <option value="$PROJECT_DIR$/src/tools/simpletcp/tcpserver.py" />
-        <option value="$PROJECT_DIR$/src/Stream.py" />
         <option value="$PROJECT_DIR$/src/tools/Node.py" />
-        <option value="$PROJECT_DIR$/src/Packet.py" />
         <option value="$PROJECT_DIR$/src/Test_Client.py" />
+        <option value="$PROJECT_DIR$/src/Test_Server.py" />
+        <option value="$PROJECT_DIR$/src/Packet.py" />
+        <option value="$PROJECT_DIR$/src/Stream.py" />
+        <option value="$PROJECT_DIR$/src/Peer.py" />
+        <option value="$PROJECT_DIR$/src/UserInterface.py" />
       </list>
     </option>
   </component>
@@ -193,7 +183,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -207,7 +197,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Test_Client">
+  <component name="RunManager" selected="Python.UserInterface">
     <configuration name="Test_Client" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Network_Project" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -304,10 +294,10 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.UserInterface" />
         <item itemvalue="Python.Test_Client" />
         <item itemvalue="Python.Test_Server" />
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.UserInterface" />
       </list>
     </recent_temporary>
   </component>
@@ -337,12 +327,12 @@
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26752505" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26752505" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32891566" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32891566" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -371,20 +361,8 @@
     <entry file="file://$PROJECT_DIR$/src/tools/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/tools/NetworkGraph.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-713" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/UserInterface.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/tools/simpletcp/serversocket.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -393,71 +371,105 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Stream.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="4" selection-start-line="4" selection-end-line="4" />
-          <folding>
-            <element signature="e#0#54#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/tools/simpletcp/tcpserver.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="493">
           <caret line="29" column="31" selection-start-line="29" selection-start-column="31" selection-end-line="29" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#57#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/tools/SemiNode.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/tools/simpletcp/clientsocket.py">
+    <entry file="file://$PROJECT_DIR$/src/Test_Client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
+        <state relative-caret-position="360">
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <marker date="1547894434000" expanded="true" signature="451:592" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/tools/NetworkGraph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-109" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Test_Server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+        <state relative-caret-position="240">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
           <folding>
             <marker date="1547631416000" expanded="true" signature="59:123" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Packet.py">
+    <entry file="file://$PROJECT_DIR$/src/tools/simpletcp/clientsocket.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-562">
-          <caret line="352" column="12" lean-forward="true" selection-start-line="352" selection-start-column="12" selection-end-line="352" selection-end-column="12" />
+        <state relative-caret-position="383">
+          <caret line="95" column="29" selection-start-line="95" selection-start-column="29" selection-end-line="95" selection-end-column="29" />
           <folding>
-            <element signature="e#8944#8964#0" expanded="true" />
-            <marker date="1547887657000" expanded="true" signature="11310:11390" ph="..." />
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/tools/Node.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="81" column="23" lean-forward="true" selection-start-line="81" selection-start-column="23" selection-end-line="81" selection-end-column="23" />
+        <state relative-caret-position="561">
+          <caret line="79" column="62" lean-forward="true" selection-start-line="79" selection-start-column="62" selection-end-line="79" selection-end-column="62" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Test_Client.py">
+    <entry file="file://$PROJECT_DIR$/src/Stream.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="41" column="9" lean-forward="true" selection-start-line="41" selection-start-column="9" selection-end-line="41" selection-end-column="9" />
+        <state relative-caret-position="820">
+          <caret line="41" column="28" lean-forward="true" selection-start-line="41" selection-start-column="28" selection-end-line="41" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Packet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5295">
+          <caret line="440" column="21" selection-start-line="440" selection-start-column="21" selection-end-line="440" selection-end-column="21" />
+          <folding>
+            <element signature="e#8944#8964#0" expanded="true" />
+            <marker date="1547974046000" expanded="true" signature="11310:11390" ph="..." />
+            <marker date="1547974046000" expanded="true" signature="16565:16574" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/UserInterface.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+            <marker date="1547979995000" expanded="true" signature="221:222" ph="..." />
+            <marker date="1547979995000" expanded="true" signature="221:1319" ph="..." />
+            <marker date="1547979995000" expanded="true" signature="324:798" ph="..." />
+            <marker date="1547979995000" expanded="true" signature="1110:1319" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Peer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4384">
+          <caret line="323" column="19" lean-forward="true" selection-start-line="323" selection-start-column="19" selection-end-line="323" selection-end-column="19" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
-            <marker date="1547888106000" expanded="true" signature="476:604" ph="..." />
+            <marker date="1547977031000" expanded="true" signature="11656:11775" ph="..." />
+            <marker date="1547977031000" expanded="true" signature="11843:11931" ph="..." />
           </folding>
         </state>
       </provider>

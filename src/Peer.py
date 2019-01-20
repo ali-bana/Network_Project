@@ -1,10 +1,11 @@
 from src.Stream import Stream
 from src.Packet import Packet, PacketFactory
-from src.UserInterface import UserInterface
+from src.UserInterface import UI
 from src.tools.SemiNode import SemiNode
 from src.tools.NetworkGraph import NetworkGraph, GraphNode
 import time
 import threading
+import queue
 
 """
     Peer is our main object in this project.
@@ -14,8 +15,8 @@ import threading
 """
 
 
-class Peer:
-    def __init__(self, server_ip, server_port, is_root=False, root_address=None):
+class Peer(threading.Thread):
+    def __init__(self, server_ip, server_port, is_root, UI, root_address=None):
         """
         The Peer object constructor.
 
@@ -42,7 +43,18 @@ class Peer:
         :type is_root: bool
         :type root_address: tuple
         """
-        pass
+        super().__init__()
+        self.ui_buffer = queue.Queue()
+        self.stream = Stream(server_ip, server_port)
+        self.ip = server_ip
+        self.port = server_port
+        self.reunion_sender = ReunionSender(self)
+        self.parent = self.root_address
+        self.setDaemon(True)
+        self.UI = UI
+        self.is_root = is_root
+        if not is_root:
+            self.root_address = ('localhost', 8888)
 
     def start_user_interface(self):
         """
@@ -50,6 +62,7 @@ class Peer:
 
         :return:
         """
+        # in our code userinterface starts this shit
         pass
 
     def handle_user_interface_buffer(self):
@@ -255,6 +268,8 @@ class Peer:
         :param packet: Arrived reunion packet
         :return:
         """
+        nodes = PacketFactory.parse_reunion_packet_body(packet.body)
+
         pass
 
     def __handle_join_packet(self, packet):
@@ -282,4 +297,31 @@ class Peer:
         :param sender: Sender of the packet
         :return: The specified neighbour for the sender; The format is like ('192.168.001.001', '05335').
         """
+        pass
+
+
+class ReunionWaiter(threading.Thread):
+    def __init__(self, root):
+        super().__init__()
+        self.recieved = False
+        self.setDaemon(True)
+        self.root = root
+
+    def run(self):
+        time.sleep(16)
+        if not self.recieved:
+            self.root.notHelloBackNotify()
+
+
+class ReunionSender(threading.Thread):
+    def __init__(self, peer):
+        super().__init__()
+        self.notRecieved = []
+        self.peer = peer
+
+    def run(self):
+        self.setDaemon(True)
+        while True:
+            time.sleep(4)
+            # send the fucking reunion
         pass

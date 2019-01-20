@@ -17,11 +17,11 @@ class Stream:
         """
         queue.put(bytes('ACK', 'utf8'))
         self._server_in_buf.append(data)
-        self.app_call_back(address, data)
+        # self.app_call_back(address, data)
 
     pass
 
-    def __init__(self, ip, port, app_call_back):
+    def __init__(self, ip, port,):
         """
         The Stream object constructor.
 
@@ -33,24 +33,13 @@ class Stream:
         :param port: 5 characters
 
         """
-        print('shit')
         self.ip = Node.parse_ip(ip)
-        print('shit1')
         self.port = Node.parse_port(port)
-        print('shit2')
-
         self.server = TCPServer(self.ip, self.port, self.callback, 1000, 2048)
-        print('shit3')
         self.server.start()
-        print('shit4')
         self._server_in_buf = []
-        print('shit5')
-        self.app_call_back = app_call_back
-        print('shit6')
         self.nodes = []
-        print('shit7')
         self.out_buffer = []
-        print('shi8')
 
 
     def get_server_address(self):
