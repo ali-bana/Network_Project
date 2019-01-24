@@ -1,9 +1,9 @@
 import threading
 from src.Peer import Peer
-from kivy.app import App
-from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager, Screen
-
+# from kivy.app import App
+# from kivy.lang import Builder
+# from kivy.uix.screenmanager import ScreenManager, Screen
+#
 
 class UI:
     def __init__(self):
@@ -46,10 +46,6 @@ class UI:
 
 
 
-class Graphical_UI(App):
-    def build(self):
-        self.add
-
 
 
 
@@ -65,49 +61,48 @@ class InputReader(threading.Thread):
             self.ui.add_to_buffer(s)
 
 
-Builder.load_string("""
-<Root_or_Client>:
-    BoxLayout:
-        Button:
-            text: 'Goto settings'
-            on_press:
-                root.manager.transition.direction = 'left'
-                root.manager.current = 'settings'
-        Button:
-            text: 'Quit'
-            root.mf()
+# Builder.load_string("""
+# <Root_or_Client>:
+#     BoxLayout:
+#         Button:
+#             text: 'Goto settings'
+#             on_press:
+#                 root.manager.transition.direction = 'left'
+#                 root.manager.current = 'settings'
+#         Button:
+#             text: 'Quit'
+#             root.mf()
+#
+# <SettingsScreen>:
+#     BoxLayout:
+#         Button:
+#             text: 'My settings button'
+#         Button:
+#             text: 'Back to menu'
+#             on_press:
+#                 root.manager.transition.direction = 'right'
+#                 root.manager.current = 'menu'
+# """)
+#
+# # Declare both screens
+# class Root_or_Client(Screen):
+#     pass
+#
+# class SettingsScreen(Screen):
+#     pass
+#
+# # Create the screen manager
+# sm = ScreenManager()
+# sm.add_widget(Root_or_Client(name='menu'))
+# sm.add_widget(SettingsScreen(name='settings'))
+#
+# class TestApp(App):
+#
+#
+#     def build(self):
+#         return sm
 
-<SettingsScreen>:
-    BoxLayout:
-        Button:
-            text: 'My settings button'
-        Button:
-            text: 'Back to menu'
-            on_press:
-                root.manager.transition.direction = 'right'
-                root.manager.current = 'menu'
-""")
 
-# Declare both screens
-class Root_or_Client(Screen):
-    pass
-
-class SettingsScreen(Screen):
-    pass
-
-# Create the screen manager
-sm = ScreenManager()
-sm.add_widget(Root_or_Client(name='menu'))
-sm.add_widget(SettingsScreen(name='settings'))
-
-class TestApp(App):
-
-
-    def build(self):
-        return sm
 
 if __name__ == '__main__':
-    TestApp().run()
-
-# if __name__ == '__main__':
-#     ui = UI()
+    ui = UI()
