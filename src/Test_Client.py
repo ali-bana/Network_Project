@@ -11,7 +11,7 @@ if __name__ == '__main__':
     root = GraphNode(('localhost', 3333))
     n = NetworkGraph(root)
 
-    print(n.find_node('localhost', 3333))
+    # print(n.find_node('localhost', 3333))
 
     n.register(('localhost', 4444))
     n.register(('localhost', 5555))
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     n.register(('localhost', 9999))
     n.register(('localhost', 1111))
 
-    print(n.find_live_node(('localhost', 4444)))
+    # print(n.find_live_node(('localhost', 4444)))
 
     father = n.find_live_node(('localhost', 4444)).get_address()
 
@@ -31,10 +31,10 @@ if __name__ == '__main__':
 
     n.add_node('localhost', 5555, father)
 
-    print('registered')
+    # print('registered')
 
-    for ng in n.registered:
-        print(ng.get_address())
+    # for ng in n.registered:
+    #     print(ng.get_address())
 
     father = n.find_live_node(('localhost', 6666)).get_address()
 
@@ -48,12 +48,38 @@ if __name__ == '__main__':
 
     n.add_node('localhost', 8888, father)
 
+    # n.turn_off_node(('localhost', 5555))
+
+    for i in range(0, 20):
+        n.increment_time()
+
+    print(n.find_live_node(('localhost', 1111)).get_address())
+    print(n.find_node('localhost', 3333).is_on)
+
+    n.reunion_arrived(('localhost', 5555))
+    n.reunion_arrived(('localhost', 6666))
+    n.reunion_arrived(('localhost', 7777))
+    n.reunion_arrived(('localhost', 8888))
+
+    for i in range(0, 30):
+        n.increment_time()
+
+    print(n.find_live_node(('localhost', 1111)).get_address())
+
+    print(n.find_node('localhost', 6666).is_on)
 
 
-    n.turn_off_node(('localhost', 4444))
+    for i in range(0, 80):
+        n.increment_time()
 
-    for no in n.nodes:
-        print(no.get_address())
-        if no.parent is not None:
-            print(no.parent.get_address())
-        print('.......')
+    print(n.find_live_node(('localhost', 1111)).get_address())
+
+    print(n.find_node('localhost', 3333).is_on)
+
+    # n.turn_off_node(('localhost', 4444))
+
+    # for no in n.nodes:
+    #     print(no.get_address())
+    #     if no.parent is not None:
+    #         print(no.parent.get_address())
+    #     print('.......')

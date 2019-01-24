@@ -60,14 +60,18 @@ class Peer(threading.Thread):
             self.root_address = root_address
         self.children = []
         self.is_reunion_running = False
-        self.parent = self.root_address
+        self.parent = None
         self.is_connected = False
-        self.reunion_timer = ReunionTimer(self)
+        # self.reunion_timer = ReunionTimer(self)
         self.graph = NetworkGraph(GraphNode(self.root_address))
         if not self.is_root:
             print('making the shit')
             self.stream.add_node(self.root_address, True)
 
+        self.r_h_b_received = True
+        self.since_last = 0
+        self.timer = Timer(self)
+        self.timer.start()
 
     def start_user_interface(self):
         """
@@ -119,9 +123,14 @@ class Peer(threading.Thread):
                 for reged in self.graph.registered:
                     print(reged.get_address()[0])
                     print(reged.get_address()[1])
+            elif s[0] == 're':
+                self.send_reunion()
                 pass
             elif s[0] == 'par':
                 print(self.parent)
+            elif s[0] == 'ch':
+                for address in self.children:
+                    print(address)
 
         pass
 
@@ -139,10 +148,13 @@ class Peer(threading.Thread):
         pass
 
     def send_message(self, s):
+        print('sending mesaage to:')
         pkt = PacketFactory.new_message_packet(s, self.address)
         for address in self.children:
+            print(address)
             self.stream.add_message_to_out_buff(address, pkt)
-        if not self.is_root:
+        if not (self.is_root) and (self.address is not None):
+            print(self.parent)
             self.stream.add_message_to_out_buff(self.parent, pkt)
         pass
 
@@ -176,7 +188,7 @@ class Peer(threading.Thread):
             #     self.stream.clear_out_buff()
             #     self.stream.clear_not_reg_nodes()
 
-            print('we R in loop')
+            # print('we R in loop')
             self.read_stream_in_buffer()
             self.handle_user_interface_buffer()
             self.stream.send_out_buf_messages()
@@ -194,8 +206,6 @@ class Peer(threading.Thread):
             self.handle_packet(packet)
 
         self.stream.clear_in_buff()
-
-
 
     def run_reunion_daemon(self):
 
@@ -223,7 +233,7 @@ class Peer(threading.Thread):
 
         :return:
         """
-        self.reunion_timer.start()
+        # self.reunion_timer.start()
         pass
 
     def send_broadcast_packet(self, broadcast_packet):
@@ -321,8 +331,10 @@ class Peer(threading.Thread):
             self.children.clear()
             self.stream.remove_not_reg_nodes()
             self.parent = Node.parse_address((packet.body[3:18], packet.body[18:23]))
+            self.stream.add_node(self.parent)
             join = PacketFactory.new_join_packet(self.address)
             self.stream.add_message_to_out_buff(self.parent, join)
+            self.is_connected = True
             # now we are connected
         elif (packet.body[0:3] == 'REQ') and (self.is_root):
             if not self.graph.is_registered(packet.get_source_server_address()):
@@ -391,9 +403,35 @@ class Peer(threading.Thread):
 
         :return:
         """
-        nodes = self.stream.get_not_register_nodes()
-        for node in nodes:
-            self.stream.add_message_to_out_buff(node.get_server_address(), packet)
+        if not self.child_or_parent(packet.get_source_server_address()):
+            return
+        message = packet.get_body()
+        self.ui.display_message('this is message' + message)
+        res_pkt = PacketFactory.new_message_packet(message, self.address)
+        print('trying to send packet to:')
+        for address in self.children:
+            if not self.address_equal(address, packet.get_source_server_address()):
+                self.stream.add_message_to_out_buff(address, res_pkt)
+                print(address)
+        if (not self.is_root) and (self.parent is not Node):
+            if self.address_equal(self.parent, packet.get_source_server_address()):
+                return
+            print(self.parent)
+            self.stream.add_message_to_out_buff(self.parent, res_pkt)
+
+    def address_equal(self, address1, address2):
+        address1 = Node.parse_address(address1)
+        address2 = Node.parse_address(address2)
+        return (address1[0] == address2[0]) and (address1[1] == address2[1])
+
+    def child_or_parent(self, input):
+        for address in self.children:
+            if self.address_equal(input, address):
+                return True
+        if self.parent is not Node:
+            if self.address_equal(input, self.parent):
+                return True
+        return False
         pass
 
     def __handle_reunion_packet(self, packet):
@@ -422,9 +460,14 @@ class Peer(threading.Thread):
         nodes = PacketFactory.parse_reunion_packet_body(packet.body)
 
         if self.is_root:
+            if packet.body[0:3] == 'RES':
+                return
+            self.graph.reunion_arrived(nodes[0])
             nodes.reverse()
             res_pkt = PacketFactory.new_reunion_packet('RES', self.address, nodes)
             self.stream.add_message_to_out_buff(packet.get_source_server_address(), res_pkt)
+            print('hello back sent to')
+            print(packet.get_source_server_address())
             return
         else:
             if packet.body[0:3] == 'REQ':
@@ -434,11 +477,16 @@ class Peer(threading.Thread):
                 return
             else:
                 nodes = PacketFactory.parse_reunion_packet_body(packet.body)
-                if nodes[0] != self.address:
+                if not self.address_equal(nodes[0], self.address):
                     return
+                if len(nodes) == 1:
+                    # print('bla bla bla bla bla bla')
+                    self.reunion_back_arrived()
+                    return
+                # print('kiiiiir')
                 nodes.remove(nodes[0])
                 res_pkt = PacketFactory.new_reunion_packet('RES', self.address, nodes)
-                self.stream.add_message_to_out_buff(nodes[1], res_pkt)
+                self.stream.add_message_to_out_buff(nodes[0], res_pkt)
                 return
 
         pass
@@ -472,55 +520,97 @@ class Peer(threading.Thread):
         """
         pass
 
-    def reunion_failed_notify(self):
-        self.reunion_timer.stop()
-        self.is_connected = False
-        pass
+    # def reunion_failed_notify(self):
+    #     self.reunion_timer.stop()
+    #     self.is_connected = False
+    #     pass
 
     def send_reunion(self):
+        if not self.is_connected:
+            return
         pkt = PacketFactory.new_reunion_packet('REQ', self.address, [self.address])
-        self.stream.add_message_to_out_buff(pkt, pkt)
-        self.reunion_timer.sent_reunion()
+        self.stream.add_message_to_out_buff(self.parent, pkt)
+        self.since_last = 0
+        self.r_h_b_received = False
+
+    def disconnect(self):
+        self.is_connected = False
+        self.parent = None
+        self.stream.remove_not_reg_nodes()
+        self.stream.clear_in_buff()
+        # maybe we need some more shit
+
+    def sec_passed(self):
+        # print('........')
+        # print(self.is_root)
+        # print(self.is_connected)
+        # print(self.r_h_b_received)
+        # print(self.since_last)
+        # print('........')
+        if self.is_connected and (not self.is_root):
+            self.since_last += 1
+            if (not self.r_h_b_received) and (self.since_last > 50):
+                self.disconnect()
+                return
+            elif (self.r_h_b_received) and (self.since_last > 4):
+                self.send_reunion()
+        if self.is_root:
+            self.graph.increment_time()
+        pass
+
+    def reunion_back_arrived(self):
+        self.r_h_b_received = True
 
 
-class ReunionTimer(threading.Thread):
+class Timer(threading.Thread):
     def __init__(self, peer):
         super().__init__()
         self.peer = peer
-        self.timer = 0
-        self.received = False
-        self.setDaemon(True)
-        self.last_sent = 0
-        self.has_on_fly = False
-        self.stoper = False
-
-    def sent_reunion(self):
-        self.timer = 0
-        self.has_on_fly = True
-        self.run()
-        self.received = False
-        self.last_sent = 0
+        self.daemon = True
 
     def run(self):
-
-        while not self.stoper:
+        while True:
             time.sleep(1)
-            if self.has_on_fly:
-                self.timer += 1
-                if self.timer > 16:
-                    self.peer.reunion_failed_notify()
-                    return
-            self.last_sent += 1
-            if self.should_send_reunion():
-                self.peer.send_reunion()
+            self.peer.sec_passed()
 
-    def receive(self):
-        self.received = True
-        self.has_on_fly = False
-        self.timer = 0
-
-    def should_send_reunion(self):
-        return (not self.has_on_fly) and (self.last_sent > 4)
-
-    def stop(self):
-        self.stoper = True
+# class ReunionTimer(threading.Thread):
+#     def __init__(self, peer):
+#         super().__init__()
+#         self.peer = peer
+#         self.timer = 0
+#         self.received = False
+#         self.setDaemon(True)
+#         self.last_sent = 0
+#         self.has_on_fly = False
+#         self.stoper = False
+#
+#     def sent_reunion(self):
+#         self.timer = 0
+#         self.has_on_fly = True
+#         self.run()
+#         self.received = False
+#         self.last_sent = 0
+#
+#     def run(self):
+#
+#         while not self.stoper:
+#             time.sleep(1)
+#             if self.has_on_fly:
+#                 self.timer += 1
+#                 if self.timer > 16:
+#                     self.peer.reunion_failed_notify()
+#                     return
+#             self.last_sent += 1
+#             if self.should_send_reunion():
+#                 self.peer.send_reunion()
+#
+#     def receive(self):
+#         self.received = True
+#         self.has_on_fly = False
+#         self.timer = 0
+#
+#     def should_send_reunion(self):
+#         return (not self.has_on_fly) and (self.last_sent > 4)
+#
+#     def stop(self):
+#         self.stoper = True

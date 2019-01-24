@@ -431,8 +431,8 @@ class PacketFactory:
     @staticmethod
     def parse_reunion_packet_body(body):
         body = str(body)
-        numEntry = int(body[1:2])
-        body = body[2:]
+        numEntry = int(body[3:5])
+        body = body[5:]
         result = []
         for i in range(0, numEntry):
             result.append((Node.parse_ip(body[20 * i: 20 * i + 15]), Node.parse_port(body[20 * i + 15: 20 * i + 20])))

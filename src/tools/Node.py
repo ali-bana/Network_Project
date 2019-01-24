@@ -33,7 +33,8 @@ class Node:
         :return:
         """
         for o in self.out_buff:
-            # print(o)
+            print('sending:')
+            print(o)
             self.client.send(o)
         # print('trying to send the shit')
         self.out_buff = []

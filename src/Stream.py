@@ -78,8 +78,11 @@ class Stream:
 
         :return:
         """
-        self.nodes.append(Node((Node.parse_ip(server_address[0]), int(Node.parse_port(server_address[1]))), False,
+        try:
+            self.nodes.append(Node((Node.parse_ip(server_address[0]), int(Node.parse_port(server_address[1]))), False,
                                set_register_connection))
+        except:
+            print('could not establish connection')
         pass
 
     def remove_node(self, node):
@@ -194,8 +197,12 @@ class Stream:
         # print(len(self.out_buffer))
         for a in self.out_buffer:
             # print(a[0])
-            a[1].add_message_to_out_buff(a[0])
-            a[1].send_message()
+            try:
+                a[1].add_message_to_out_buff(a[0])
+                a[1].send_message()
+            except:
+                print('this bastard is not listening')
+                self.remove_node(a[1])
         self.out_buffer = []
 
     def get_not_register_nodes(self):

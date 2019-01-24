@@ -15,6 +15,7 @@ class GraphNode:
         self.parent = None
         self.address = address
         self.children = []
+        self.sinceLastReunion = 0
         pass
 
     def set_parent(self, parent):
@@ -29,6 +30,7 @@ class GraphNode:
         self.is_on = False
         self.children.clear()
         self.parent = None
+        self.sinceLastReunion = 0
         pass
 
     def add_child(self, child):
@@ -41,15 +43,35 @@ class GraphNode:
     def get_is_on(self):
         return self.is_on
 
+    def turn_on(self):
+        if not self.is_on:
+            self.is_on = True
+            self.sinceLastReunion = 0
 
+    def inc_time(self):
+        self.sinceLastReunion += 1
+        return self.sinceLastReunion
 
+    def reset_timer(self):
+        self.sinceLastReunion = 0
 
 class NetworkGraph:
     def __init__(self, root):
         self.root = root
-        root.alive = True
+        self.root.is_on = True
         self.nodes = [root]
         self.registered = []
+
+
+    def increment_time(self):
+        for node in self.nodes:
+            if (node.inc_time() > 40) and (node is not self.root):
+                self.turn_off_node(node.get_address())
+
+    def reunion_arrived(self, sender):
+        node = self.find_node(sender[0], sender[1])
+        if node is not None:
+            node.reset_timer()
 
     def find_live_node(self, sender):
         """
@@ -77,10 +99,10 @@ class NetworkGraph:
             self.turn_off_node(sender)
         q = queue.Queue()
         q.put(self.root)
-        print('fnbkngkbn')
+        # print('fnbkngkbn')
         while not q.empty():
             n = q.get()
-            print(n)
+            # print(n)
             if len(n.children) < 2:
                 return n
             for a in n.children:
@@ -107,7 +129,7 @@ class NetworkGraph:
 
     def turn_off_node(self, node_address):
         node = self.find_node(node_address[0], node_address[1])
-        if node.get_is_on:
+        if node.get_is_on():
             q = queue.Queue()
             q.put(node)
             node.parent.children.remove(node)
@@ -132,7 +154,6 @@ class NetworkGraph:
         node = self.find_node(address[0], address[1])
         if node is None:
             self.register_node(address)
-
 
     def add_node(self, ip, port, father_address):
         """
@@ -159,10 +180,13 @@ class NetworkGraph:
             self.nodes.append(node)
             node.set_parent(father)
             father.add_child(node)
-            self.registered.remove(node)
+            node.turn_on()
+            try:
+                self.registered.remove(node)
+            except:
+                pass
             return True
         return False
 
     def is_registered(self, address):
         return self.find_node(address[0], address[1]) is not None
-
