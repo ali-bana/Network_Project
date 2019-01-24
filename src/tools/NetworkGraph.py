@@ -1,4 +1,6 @@
 import time
+import queue
+from src.tools.Node import Node
 
 
 class GraphNode:
@@ -9,19 +11,37 @@ class GraphNode:
         :type address: tuple
 
         """
+        self.is_on = False
+        self.parent = None
+        self.address = address
+        self.children = []
         pass
 
     def set_parent(self, parent):
+        self.parent = parent
         pass
 
     def set_address(self, new_address):
+        self.address = new_address
         pass
 
-    def __reset(self):
+    def reset(self):
+        self.is_on = False
+        self.children.clear()
+        self.parent = None
         pass
 
     def add_child(self, child):
+        self.children.append(child)
         pass
+
+    def get_address(self):
+        return Node.parse_address(self.address)
+
+    def get_is_on(self):
+        return self.is_on
+
+
 
 
 class NetworkGraph:
@@ -29,6 +49,7 @@ class NetworkGraph:
         self.root = root
         root.alive = True
         self.nodes = [root]
+        self.registered = []
 
     def find_live_node(self, sender):
         """
@@ -48,19 +69,70 @@ class NetworkGraph:
         :return: Best neighbour for sender.
         :rtype: GraphNode
         """
+
+        node = self.find_node(sender[0], sender[1])
+        if node is None:
+            return
+        if node.get_is_on():
+            self.turn_off_node(sender)
+        q = queue.Queue()
+        q.put(self.root)
+        print('fnbkngkbn')
+        while not q.empty():
+            n = q.get()
+            print(n)
+            if len(n.children) < 2:
+                return n
+            for a in n.children:
+                q.put(a)
         pass
 
+    def register_node(self, address):
+        self.registered.append(GraphNode(address))
+
     def find_node(self, ip, port):
+        input = Node.parse_address((ip, port))
+        for g_node in self.nodes:
+            if (g_node.get_address()[0] == input[0]) and (g_node.get_address()[1] == input[1]):
+                return g_node
+        for g_node in self.registered:
+            if (g_node.get_address()[0] == input[0]) and (g_node.get_address()[1] == input[1]):
+                return g_node
+
         pass
 
     def turn_on_node(self, node_address):
+
         pass
 
     def turn_off_node(self, node_address):
+        node = self.find_node(node_address[0], node_address[1])
+        if node.get_is_on:
+            q = queue.Queue()
+            q.put(node)
+            node.parent.children.remove(node)
+            while not q.empty():
+                n = q.get()
+                for a in n.children:
+                    q.put(a)
+                n.is_on = False
+                self.nodes.remove(n)
+                self.registered.append(n)
+                n.reset()
+
         pass
 
     def remove_node(self, node_address):
+        node = self.find_node(node_address[0], node_address[1])
+        self.turn_off_node(node_address)
+        self.registered.remove(node)
         pass
+
+    def register(self, address):
+        node = self.find_node(address[0], address[1])
+        if node is None:
+            self.register_node(address)
+
 
     def add_node(self, ip, port, father_address):
         """
@@ -81,4 +153,16 @@ class NetworkGraph:
 
         :return:
         """
-        pass
+        node = self.find_node(ip, port)
+        father = self.find_node(father_address[0], father_address[1])
+        if (node is not None) and (father is not None):
+            self.nodes.append(node)
+            node.set_parent(father)
+            father.add_child(node)
+            self.registered.remove(node)
+            return True
+        return False
+
+    def is_registered(self, address):
+        return self.find_node(address[0], address[1]) is not None
+

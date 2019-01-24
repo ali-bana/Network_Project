@@ -204,7 +204,6 @@ class Packet:
         :rtype: str
         """
         return str(self.version) + ' ' + str(self.type) + ' ' + str(self.length) + ' ' + self.sender_ip + ' ' + str(self.sender_port)
-        pass
 
     def get_version(self):
         """
@@ -240,7 +239,6 @@ class Packet:
         :rtype: str
         """
         return self.body
-        pass
 
     def get_buf(self):
         """

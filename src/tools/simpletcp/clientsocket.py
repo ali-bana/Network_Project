@@ -3,7 +3,7 @@ import socket
 
 
 class ClientSocket:
-    def __init__(self, mode, port, received_bytes=2048, single_use=True):
+    def __init__(self, mode, port, received_bytes=2048):
         """
 
         Handle the socket's mode.
@@ -25,7 +25,7 @@ class ClientSocket:
         else:
             self.connect_ip = mode
         # Handle the port we're going to connect to.
-        self.connect_port = port
+        self.connect_port = int(port)
         if type(self.connect_port) != int:
             print("port must be an integer", file=sys.stderr)
             raise ValueError
@@ -34,7 +34,7 @@ class ClientSocket:
         # Save the number of bytes to be read in response
         self.received_bytes = received_bytes
         # Save whether this socket is single-use or not.
-        self.single_use = single_use
+        self.single_use = False
         # If this isn't a single-use socket, connect right away.
         if not self.single_use:
             self._socket.connect((self.connect_ip, self.connect_port))
@@ -100,6 +100,7 @@ class ClientSocket:
             # Keep track of the fact that this is closed.
             self.closed = True
         # Return the response
+        # print('message sent succ')
         return response
 
     def close(self):

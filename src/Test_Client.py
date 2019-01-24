@@ -1,44 +1,59 @@
 from src.Stream import Stream
-
-def callback(address, data):
-    print(address[0])
-    print(address[1])
-    print(data)
-
-
-print('sdfgg')
-address = (('localhost', 8888))
-print('sdfgg1')
-s = Stream('localhost', 6666, callback)
-print('sdfdfkklkl')
-s.add_node(address)
-s.add_message_to_out_buff(address, bytes('aliali', 'UTF-8'))
-s.send_out_buf_messages(False)
-
-
-
 from src.Packet import PacketFactory
-from src.Packet import Packet
+from src.tools.NetworkGraph import GraphNode
+from src.tools.NetworkGraph import NetworkGraph
+if __name__ == '__main__':
+    # addressroot = ('localhost', 8888)
+    # s = Stream('localhost', 6666)
+    # s.add_node(addressroot)
+    # s.add_message_to_out_buff(addressroot, PacketFactory.new_register_packet('REQ', addressroot, addressroot))
+    # s.send_out_buf_messages()
+    root = GraphNode(('localhost', 3333))
+    n = NetworkGraph(root)
 
-#
-# def printPacket(p):
-#     print(p.version)
-#     print(p.type)
-#     print(p.length)
-#     print(p.sender_ip)
-#     print(p.sender_port)
-#     print(p.body)
+    print(n.find_node('localhost', 3333))
 
-#
-# pk = PacketFactory.new_message_packet('this',('092.168.1.1', 66))
-# pk = PacketFactory.new_advertise_packet('REQ', ('092.168.1.1', 66))
-# pk = PacketFactory.new_advertise_packet('RES', ('092.168.1.1', 66), ('092.168.1.1', 66))
-# pk = PacketFactory.new_join_packet(('092.168.1.1', 66))
-# pk = PacketFactory.new_register_packet('REQ', ('092.168.1.1', 66))
-# pk = PacketFactory.new_register_packet('RES', ('092.168.1.1', 66))
-# nodes = [('168.1.1.1', 456), ('108.143.1.1', 456), ('21.88.1.0', 456), ('168.43.1.3', 456)]
-# pk = PacketFactory.new_reunion_packet('REQ', ('092.168.1.1', 66), nodes)
-# pk = PacketFactory.new_reunion_packet('RES', ('092.168.1.1', 66), nodes)
-# print(pk)
-# print('\n\n')
-# printPacket(PacketFactory.parse_buffer(pk))
+    n.register(('localhost', 4444))
+    n.register(('localhost', 5555))
+    n.register(('localhost', 6666))
+    n.register(('localhost', 7777))
+    n.register(('localhost', 8888))
+    n.register(('localhost', 9999))
+    n.register(('localhost', 1111))
+
+    print(n.find_live_node(('localhost', 4444)))
+
+    father = n.find_live_node(('localhost', 4444)).get_address()
+
+    n.add_node('localhost', 4444, father)
+
+    father = n.find_live_node(('localhost', 5555)).get_address()
+
+    n.add_node('localhost', 5555, father)
+
+    print('registered')
+
+    for ng in n.registered:
+        print(ng.get_address())
+
+    father = n.find_live_node(('localhost', 6666)).get_address()
+
+    n.add_node('localhost', 6666, father)
+
+    father = n.find_live_node(('localhost', 7777)).get_address()
+
+    n.add_node('localhost', 7777, father)
+
+    father = n.find_live_node(('localhost', 8888)).get_address()
+
+    n.add_node('localhost', 8888, father)
+
+
+
+    n.turn_off_node(('localhost', 4444))
+
+    for no in n.nodes:
+        print(no.get_address())
+        if no.parent is not None:
+            print(no.parent.get_address())
+        print('.......')

@@ -21,7 +21,7 @@ class Stream:
 
     pass
 
-    def __init__(self, ip, port,):
+    def __init__(self, ip, port, ):
         """
         The Stream object constructor.
 
@@ -34,13 +34,20 @@ class Stream:
 
         """
         self.ip = Node.parse_ip(ip)
-        self.port = Node.parse_port(port)
+        self.port = int(Node.parse_port(port))
         self.server = TCPServer(self.ip, self.port, self.callback, 1000, 2048)
         self.server.start()
         self._server_in_buf = []
         self.nodes = []
         self.out_buffer = []
 
+    def clear_out_buff(self):
+        self.out_buffer.clear()
+
+    def clear_not_reg_nodes(self):
+        for node in self.nodes:
+            if not node.is_register:
+                self.nodes.remove(node)
 
     def get_server_address(self):
         """
@@ -71,8 +78,8 @@ class Stream:
 
         :return:
         """
-        print('this is add_node')
-        self.nodes.append(Node(server_address, False, set_register_connection))
+        self.nodes.append(Node((Node.parse_ip(server_address[0]), int(Node.parse_port(server_address[1]))), False,
+                               set_register_connection))
         pass
 
     def remove_node(self, node):
@@ -105,9 +112,21 @@ class Stream:
         :return: The node that input address.
         :rtype: Node
         """
+        input = Node.parse_address((ip, port))
+        # print('.........')
+        # print(input[0])
+        # print(input[1])
+        # print('.........')
+        # print(len(self.nodes))
         for node in self.nodes:
-            if node.get_server_address() == (Node.parse_ip(ip), Node.parse_port(port)):
+            add = Node.parse_address(node.get_server_address())
+            # print('xxxxxxxxxxxx')
+            # print(add[0])
+            # print(add[1])
+            # print('xxxxxxxxxxxx')
+            if (input[0] == add[0]) and (input[1] == add[1]):
                 return node
+
         pass
 
     def add_message_to_out_buff(self, address, message):
@@ -123,9 +142,15 @@ class Stream:
 
         :return:
         """
+
         node = self.get_node_by_server(address[0], address[1])
+
         if node is not None:
             self.out_buffer.append((message, node))
+        # print('this is out buffer')
+        #         # for a in self.out_buffer:
+        #         #     print(a[0])
+        #         #     print(a[1])
         pass
 
     def read_in_buf(self):
@@ -153,7 +178,9 @@ class Stream:
         for a in self.out_buffer:
             if a[1] == node:
                 node.add_message_to_out_buff(a[0])
+                self.out_buffer.remove(a)
             node.send_message()
+
         pass
 
     def send_out_buf_messages(self, only_register=False):
@@ -162,10 +189,24 @@ class Stream:
 
         :return:
         """
-        #dont know only register fucking meaning
-        print('this is send_out_buf_messages')
-
+        # dont know only register fucking meaning
+        # print('this is send_out_buf_messages')
+        # print(len(self.out_buffer))
         for a in self.out_buffer:
+            # print(a[0])
             a[1].add_message_to_out_buff(a[0])
             a[1].send_message()
-        pass
+        self.out_buffer = []
+
+    def get_not_register_nodes(self):
+        result = []
+        for node in self.nodes:
+            if not node.is_register:
+                result.append(node)
+        return result
+
+    def remove_not_reg_nodes(self):
+        for node in self.nodes:
+            if not node.is_register:
+                node.close()
+                self.nodes.remove(node)
