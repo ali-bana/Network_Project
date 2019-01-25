@@ -188,7 +188,7 @@ class Peer(threading.Thread):
             #     self.stream.clear_out_buff()
             #     self.stream.clear_not_reg_nodes()
 
-            # print('we R in loop')
+            print('we R in loop')
             self.read_stream_in_buffer()
             self.handle_user_interface_buffer()
             self.stream.send_out_buf_messages()
@@ -547,6 +547,7 @@ class Peer(threading.Thread):
         # print(self.r_h_b_received)
         # print(self.since_last)
         # print('........')
+        self.ui.update_stats()
         if self.is_connected and (not self.is_root):
             self.since_last += 1
             if (not self.r_h_b_received) and (self.since_last > 50):
