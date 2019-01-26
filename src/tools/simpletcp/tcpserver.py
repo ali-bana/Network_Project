@@ -22,6 +22,7 @@ class TCPServer(threading.Thread):
     def __init__(self, mode, port, read_callback,
                  maximum_connections=5, receive_bytes=2048):
         super().__init__()
+        self.setDaemon(True)
         self.server_socket = ServerSocket(
             mode, port, read_callback, maximum_connections, receive_bytes
         )

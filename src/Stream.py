@@ -21,7 +21,7 @@ class Stream:
 
     pass
 
-    def __init__(self, ip, port, ):
+    def __init__(self, ip, port, ui):
         """
         The Stream object constructor.
 
@@ -40,6 +40,7 @@ class Stream:
         self._server_in_buf = []
         self.nodes = []
         self.out_buffer = []
+        self.ui = ui
 
     def clear_out_buff(self):
         self.out_buffer.clear()
@@ -81,8 +82,10 @@ class Stream:
         try:
             self.nodes.append(Node((Node.parse_ip(server_address[0]), int(Node.parse_port(server_address[1]))), False,
                                set_register_connection))
+            return True
         except:
-            print('could not establish connection')
+            self.ui.display_message('Could not Establish Connection!')
+            return False
         pass
 
     def remove_node(self, node):
@@ -97,7 +100,10 @@ class Stream:
 
         :return:
         """
-        self.nodes.remove(node)
+        try:
+            self.nodes.remove(node)
+        except:
+            pass
         node.close()
         pass
 
@@ -150,6 +156,7 @@ class Stream:
 
         if node is not None:
             self.out_buffer.append((message, node))
+            return
         # print('this is out buffer')
         #         # for a in self.out_buffer:
         #         #     print(a[0])

@@ -7,6 +7,7 @@ from kivy.uix.boxlayout import BoxLayout
 from src.tools.Node import Node
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.label import Label
+import sys
 
 
 #
@@ -339,11 +340,17 @@ class GIU(App):
     def build(self):
         hp = HomePage(name='home')
         sm = Screen_manager(hp)
+        self.hp = hp
         sm.add_widget(User_Address(name='user_address', sm=sm))
         sm.add_widget(Root_or_Client(name='root_or_client'))
         sm.add_widget(Root_Address(name='root_address', sm=sm))
         sm.add_widget(hp)
         return sm
+
+    def on_stop(self):
+        self.hp.peer.stop = True
+        self.hp.peer.timer.stop = True
+        sys.exit()
 
 
 if __name__ == '__main__':

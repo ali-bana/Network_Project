@@ -47,7 +47,7 @@ class Peer(threading.Thread):
         """
         super().__init__()
         self.ui_buffer = queue.Queue()
-        self.stream = Stream(server_ip, server_port)
+        self.stream = Stream(server_ip, server_port, ui)
         self.ip = Node.parse_ip(server_ip)
         self.port = Node.parse_port(str(server_port))
 
@@ -72,6 +72,7 @@ class Peer(threading.Thread):
         self.since_last = 0
         self.timer = Timer(self)
         self.timer.start()
+        self.stop = False
 
     def start_user_interface(self):
         """
@@ -148,6 +149,8 @@ class Peer(threading.Thread):
         pass
 
     def send_message(self, s):
+        if not self.is_connected:
+            return
         print('sending mesaage to:')
         pkt = PacketFactory.new_message_packet(s, self.address)
         for address in self.children:
@@ -182,7 +185,7 @@ class Peer(threading.Thread):
 
         :return:
         """
-        while True:
+        while not self.stop:
             # if not self.is_connected:
             #     self.stream.clear_in_buff()
             #     self.stream.clear_out_buff()
@@ -268,6 +271,10 @@ class Peer(threading.Thread):
 
         """
         print('this is handle packet')
+
+        if not self.chenck_in_neighbour(packet.get_source_server_address()):
+            return
+
         self.ui.display_pkt(packet)
         if packet.type == 1:
             self.__handle_register_packet(packet)
@@ -285,6 +292,16 @@ class Peer(threading.Thread):
             self.__handle_reunion_packet(packet)
             pass
         pass
+
+    def chenck_in_neighbour(self, address):
+        if not self.is_connected:
+            return False
+        if self.address_equal(self.parent, address):
+            return True
+        for c in self.children:
+            if self.address_equal(c, address):
+                return True
+        return False
 
     def __check_registered(self, source_address):
         """
@@ -331,10 +348,14 @@ class Peer(threading.Thread):
             self.children.clear()
             self.stream.remove_not_reg_nodes()
             self.parent = Node.parse_address((packet.body[3:18], packet.body[18:23]))
-            self.stream.add_node(self.parent)
+            succ = self.stream.add_node(self.parent)
+            if not succ:
+                return
             join = PacketFactory.new_join_packet(self.address)
             self.stream.add_message_to_out_buff(self.parent, join)
             self.is_connected = True
+            self.r_h_b_received = True
+            self.since_last = 0
             # now we are connected
         elif (packet.body[0:3] == 'REQ') and (self.is_root):
             if not self.graph.is_registered(packet.get_source_server_address()):
@@ -406,7 +427,7 @@ class Peer(threading.Thread):
         if not self.child_or_parent(packet.get_source_server_address()):
             return
         message = packet.get_body()
-        self.ui.display_message('this is message' + message)
+        self.ui.display_message('Broadcast Message: ' + message)
         res_pkt = PacketFactory.new_message_packet(message, self.address)
         print('trying to send packet to:')
         for address in self.children:
@@ -541,12 +562,12 @@ class Peer(threading.Thread):
         # maybe we need some more shit
 
     def sec_passed(self):
-        # print('........')
-        # print(self.is_root)
-        # print(self.is_connected)
-        # print(self.r_h_b_received)
-        # print(self.since_last)
-        # print('........')
+        print('........')
+        print(self.is_root)
+        print(self.is_connected)
+        print(self.r_h_b_received)
+        print(self.since_last)
+        print('........')
         self.ui.update_stats()
         if self.is_connected and (not self.is_root):
             self.since_last += 1
@@ -562,15 +583,20 @@ class Peer(threading.Thread):
     def reunion_back_arrived(self):
         self.r_h_b_received = True
 
+    def exit(self):
+        self.timer.stop = True
+        self.stream.remove_not_reg_nodes()
+
 
 class Timer(threading.Thread):
     def __init__(self, peer):
         super().__init__()
         self.peer = peer
         self.daemon = True
+        self.stop = False
 
     def run(self):
-        while True:
+        while not self.stop:
             time.sleep(1)
             self.peer.sec_passed()
 
